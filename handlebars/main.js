@@ -1,42 +1,44 @@
 const express = require('express');
-const Apip = require('./api/productos');
-const productos = new Apip()
+const ProductosApi = require('./api/productos');
 const handlebars = require('express-handlebars');
-
-const app = express(); 
-const PORT = 8080;
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+const app = express();
 
 app.engine(
-    'hbs',                    
-    handlebars({              
-        extname: 'hbs',                
-        defaultLayout: 'index.hbs',         
-        layoutsDir: __dirname + './views',   
-    })
+  'hbs',
+  handlebars({
+    extname: '.hbs',
+    layoutsDir: __dirname + '/views/layouts',
+    partialsDir: __dirname + '/views/partials',
+  })
 );
 
-app.set('views', './views');
+app.set('views', 'views');
 app.set('view engine', 'hbs');
 
-// app.get('/', (request, response) => {
-//     response.render('index')
-// });
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+const productosApi = new ProductosApi();
 
-// app.post('/productos', async (request, response) => {
-//     const prod = await productos.save(request.body);
-//     response.redirect('/')
-// });
+app.get('/', (req, res) => {
+  res.render('layouts/main');
+});
 
-// app.get('/productos', async (request, response) => {
-//     const product = await productos.all();
-//     response.render('productos', {product})
-// })
+app.get('/productos', async (req, res) => {
+  const productos = await productosApi.all();
+  res.render('layouts/productos', {
+    productos: productos,
+    layout: 'productos',
+  });
+});
 
+app.post('/productos', async (req, res) => {
+  const producto = await productosApi.save(req.body);
+  res.redirect('/');
+});
 
-// const server = app.listen(PORT, () => {
-//     `Server escuchando en ${server.address().port}`
-// });
-
-// server.on('error', err => console.log(err));
+const server = app.listen(8080, () => {
+  console.log('Server listening on port 8080');
+});
+server.on('error', (err) => {
+  console.log(err);
+});
