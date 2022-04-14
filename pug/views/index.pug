@@ -1,0 +1,14 @@
+html 
+    head
+        title='Ingreso de productos'
+    body
+        h2='Producto'
+        form(action='/productos' method='POST') 
+             label(for='title') Name: 
+             input(type='text' name='title')
+             label(for='price') Price:
+             input(type='text' name='price')
+             label(for='thumbnail') URL:
+             input(type='text' name='thumbnail')
+             button='Enviar'
+             a(class ='button' href='/productos' style='text-decoration: none; color: black;') Ver productos
